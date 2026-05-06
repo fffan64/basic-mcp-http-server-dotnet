@@ -6,6 +6,7 @@ using StreamableHttpWebApp.Services;
 
 namespace StreamableHttpWebApp.Tools;
 
+[McpServerToolType]
 public class WeatherAlertsTool
 {
   private readonly IHttpClientFactory _httpClientFactory;

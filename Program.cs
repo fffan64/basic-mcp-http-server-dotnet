@@ -50,12 +50,17 @@ builder.Services.AddScoped<AuditLogger>();
 
 builder.Services.AddMcpServer()
     .WithHttpTransport(options => options.Stateless = true)
-    .WithTools<WeatherAlertsTool>();
+    .WithToolsFromAssembly();
 // builder.Services.AddMcpServer().WithHttpTransport().WithTools<WeatherAlertsTool>();
 builder.Services.AddHttpClient("weatherApi", client =>
 {
     client.BaseAddress = new Uri("https://api.weather.gov/");
     client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("weather-tool", "1.0"));
+});
+builder.Services.AddHttpClient("chuckNorrisApi", client =>
+{
+    client.BaseAddress = new Uri("https://api.chucknorris.io/");
+    client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("chuck-norris-tool", "1.0"));
 });
 
 // Add CORS to allow requests from localhost:5173 and Auth0
