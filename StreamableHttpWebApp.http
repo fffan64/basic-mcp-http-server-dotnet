@@ -1,0 +1,6 @@
+@StreamableHttpWebApp_HostAddress = http://localhost:5000
+
+GET {{StreamableHttpWebApp_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
