@@ -10,41 +10,41 @@ var builder = WebApplication.CreateBuilder(args);
 // builder.Services.AddOpenApi();
 
 // Add authentication with Auth0
-builder.Services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        var auth0Authority = builder.Configuration["Auth0:Authority"];
-        var auth0Audience = builder.Configuration["Auth0:Audience"];
+// builder.Services
+//     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//     .AddJwtBearer(options =>
+//     {
+//         var auth0Authority = builder.Configuration["Auth0:Authority"];
+//         var auth0Audience = builder.Configuration["Auth0:Audience"];
 
-        options.Authority = auth0Authority;
-        options.Audience = auth0Audience;
-        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-        {
-            NameClaimType = "name",
-            RoleClaimType = "roles",
-            ValidateAudience = true
-        };
+//         options.Authority = auth0Authority;
+//         options.Audience = auth0Audience;
+//         options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+//         {
+//             NameClaimType = "name",
+//             RoleClaimType = "roles",
+//             ValidateAudience = true
+//         };
 
-        // Add event handlers for debugging
-        options.Events = new JwtBearerEvents
-        {
-            OnAuthenticationFailed = context =>
-            {
-                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
-                logger.LogError("Authentication failed: {Exception}", context.Exception.Message);
-                return Task.CompletedTask;
-            },
-            OnTokenValidated = context =>
-            {
-                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
-                logger.LogInformation("Token validated successfully for user: {UserId}", context.Principal?.FindFirst("sub")?.Value);
-                return Task.CompletedTask;
-            }
-        };
-    });
+//         // Add event handlers for debugging
+//         options.Events = new JwtBearerEvents
+//         {
+//             OnAuthenticationFailed = context =>
+//             {
+//                 var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+//                 logger.LogError("Authentication failed: {Exception}", context.Exception.Message);
+//                 return Task.CompletedTask;
+//             },
+//             OnTokenValidated = context =>
+//             {
+//                 var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+//                 logger.LogInformation("Token validated successfully for user: {UserId}", context.Principal?.FindFirst("sub")?.Value);
+//                 return Task.CompletedTask;
+//             }
+//         };
+//     });
 
-builder.Services.AddAuthorization();
+// builder.Services.AddAuthorization();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<AuditLogger>();
 
@@ -72,6 +72,16 @@ builder.Services.AddHttpClient("disneyApi", client =>
     client.BaseAddress = new Uri("https://api.disneyapi.dev/");
     client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("disney-tool", "1.0"));
 });
+builder.Services.AddHttpClient("zeldaApi", client =>
+{
+    client.BaseAddress = new Uri("https://zelda.fanapis.com/");
+    client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("zelda-tool", "1.0"));
+});
+builder.Services.AddHttpClient("nasaApodApi", client =>
+{
+    client.BaseAddress = new Uri("https://api.nasa.gov/");
+    client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("nasa-apod-tool", "1.0"));
+});
 
 // Add CORS to allow requests from localhost:5173 and Auth0
 builder.Services.AddCors(options =>
@@ -92,11 +102,11 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.UseCors("AllowLocalhost");
-app.UseAuthentication();
-app.UseAuthorization();
+// app.UseAuthentication();
+// app.UseAuthorization();
 
 app.MapMcp();
-app.Run();
+app.Run("http://localhost:5002");
 
 
 
